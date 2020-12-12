@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kgc.mapper.MajorMapper">
+    <resultMap id="majorMap" type="Major">
+        <id property="mid" column="mid"/>
+        <result property="mname" column="mname"/>
+        <result property="mcount" column="mcount"/>
+        <result property="did" column="did"/>
+        <result property="isDel" column="is_del"/>
+        <result property="dname" column="dname"/>
+    </resultMap>
+    <select id="findByDnameAndMname" resultMap="majorMap">
+        select m.*,d.dname dname from major m,department d
+        where m.did=d.did
+        <if test="dname!=null and dname!=''">
+           and d.dname=#{dname}
+        </if>
+        <if test="mname!=null and mname!=''">
+           and m.mname=#{mname}
+        </if>
+    </select>
+    <insert id="add" parameterType="Major">
+        insert into major value (null,#{mname},0,#{did},0)
+    </insert>
+    <update id="update" parameterType="Major">
+        update major set mname=#{mname},did=#{did}
+        where mid=#{mid}
+    </update>
+    <update id="updateMajorNum" parameterType="Integer">
+        update major
+        set mcount=mcount+1
+        where mid=(select mid from grade where gid=(select gid from classinfo where classid=#{classid}))
+    </update>
+</mapper>

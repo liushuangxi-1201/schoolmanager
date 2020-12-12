@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kgc.mapper.EvaluateListMapper">
+    <select id="findAll" resultType="EvaluateList">
+        select * from evaluate_list
+    </select>
+    <insert id="add" parameterType="EvaluateList">
+        insert into evaluate_list value (null,#{elcontent})
+    </insert>
+    <delete id="del" parameterType="Integer">
+        delete from evaluate_list where elid=#{elid}
+    </delete>
+    <update id="update" parameterType="EvaluateList">
+        update evaluate_list set elcontent=#{elcontent} where elid=#{elid}
+    </update>
+</mapper>

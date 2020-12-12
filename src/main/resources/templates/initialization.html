@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>初始化数据</title>
+    <script type="text/javascript" th:src="@{/static/layui/layui.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/static/layui/css/layui.css}"/>
+</head>
+<style>
+    .layui-card {
+        box-shadow: #c0c0c0 0 1px 3px;
+    }
+
+    .layui-row .layui-form-item {
+        padding: 0 5px;
+    }
+
+</style>
+<body>
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md-offset3">
+            <h1>使用excel表格添加学生</h1>
+        </div>
+    </div>
+    <div class="layui-row">
+        <form enctype="multipart/form-data" method="post" class=""
+              th:action="@{/excel/excelImport}">
+            <div class="layui-row">
+                <div class="layui-col-md3">
+                    <label class="layui-form-label">请选择文件:</label>
+                    <button type="button" class="layui-btn" id="test3"><i class="layui-icon"></i>上传文件</button>
+                </div>
+                <div class="layui-col-md3">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">班级名称</label>
+                        <div class="layui-input-inline">
+                            <select id="selByClassName" name="classid" lay-verify="">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-col-md2">
+                    <input type="submit" value="提交" class="layui-btn layui-btn-radius layui-btn-normal"/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    layui.use([ 'jquery', 'layer', 'upload','table'], function() {
+        var $ = layui.jquery,
+        upload = layui.upload;
+        var layer = layui.layer;
+        upload.render({ //允许上传的文件后缀
+            elem: '#test3'
+            //,url: 'https://httpbin.org/post' //改成您自己的上传接口
+            ,accept: 'file' //普通文件
+            ,auto: false
+            ,exts: 'xlsx' //只允许上传压缩文件
+            ,done: function(res){
+                layer.msg('上传成功');
+                console.log(res)
+            }
+        });
+        $("[value=提交]").click(function () {
+            if ($("#selByClassName").val()==-1) {
+                layer.msg('请选择班级!!!');
+                return false;
+            }
+            location.href = "/excel/excelImport";
+
+        });
+        $.ajax({
+            type: 'post',
+            url: '/cla/findAllSel',
+            data: {},
+            dataType: "json",
+            success: function (alldata) {
+                var lists = "<option value='-1'>全部</option>";
+                for (var i=0;i<alldata.length;i++) {
+                    lists += "<option value='" + alldata[i].classid + "'>" + alldata[i].classname + "</option>";
+                }
+                $('#selByClassName').html(lists);
+            }
+        });
+    });
+</script>
+</body>
+</html>

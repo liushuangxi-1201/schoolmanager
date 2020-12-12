@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kgc.mapper.GradeMapper">
+    <select id="findAll" resultType="Grade">
+        select g.*,m.mname,d.dname,d.did did
+        from grade g,department d,major m
+        where g.mid=m.mid and d.did=m.did
+        <if test="gid!=null and gid!=''">
+            and g.gid=#{gid}
+        </if>
+        <if test="mid!=null and mid!=''">
+            and m.mid=#{mid}
+        </if>
+        <if test="did!=null and did!=''">
+            and d.did=#{did}
+        </if>
+    </select>
+    <select id="findAllSel" resultType="Grade">
+        select * from grade;
+    </select>
+    <insert id="add" parameterType="Grade">
+        insert into grade value (null,#{gname},0,#{mid},0)
+    </insert>
+    <update id="update" parameterType="Grade">
+        update grade
+        <set>
+            <if test="gname!=null and gname!=''">
+                gname=#{gname},
+            </if>
+            <if test="gcount!=null and gcount!=''">
+                gcount=#{gcount},
+            </if>
+            <if test="mid!=null and mid!=''">
+                mid=#{mid},
+            </if>
+            <if test="isDel!=null and isDel!=''">
+                is_del=#{isDel},
+            </if>
+        </set>
+        where gid=#{gid}
+    </update>
+    <update id="updateGradeNum" parameterType="Integer">
+        update grade
+        set gcount = gcount+1
+        where gid=(select gid from classinfo where classid=#{classid})
+    </update>
+</mapper>

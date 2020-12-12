@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kgc.mapper.CourseSelectMapper">
+    <select id="findAll" resultType="cn.kgc.entity.Department">
+        select * from department where is_del=0
+    </select>
+    <select id="findByDid" resultType="cn.kgc.entity.Major">
+        select * from major where did=#{did} and is_del=0
+    </select>
+    <select id="findByMid" resultType="cn.kgc.entity.Grade">
+        select * from grade where mid=#{mid} and is_del=0
+    </select>
+    <select id="findByGid" resultType="cn.kgc.entity.Classinfo">
+        select * from classinfo where gid=#{gid} and is_del=0
+    </select>
+    <select id="findByCid" resultType="cn.kgc.entity.Student">
+        select * from student where classid=#{classid} and is_del=0
+    </select>
+    <select id="findAllBySelect" resultType="cn.kgc.entity.CourseSelect">
+        select c2.cid cid,c2.cname cname,c2.ccredit ccredit,
+        c2.studytype studytype,c2.cselcount cselcount,
+        s.sname sname, c2.cmaxcount cmaxcount,s.stuid stuid,
+        c.classname classname,sc.scid scid,major.mid mid
+        from department,major,course c2,grade g,classinfo c,student s,stu_course sc
+        where ((department.did = major.did and major.mid = c2.mid and major.mid = g.mid and g.gid = c.gid and c.classid = s.classid and s.sid = sc.sid and sc.cid=c2.cid)
+        or
+        (department.did = major.did and major.mid = g.mid and c2.ctid=5 and g.gid = c.gid and c.classid = s.classid and s.sid = sc.sid and sc.cid=c2.cid))
+        and department.is_del=0 and major.is_del=0 and g.is_del=0 and c.is_del=0 and s.is_del=0 and c2.is_del=0 and sc.is_del=0 and g.is_del=0 and c.is_del=0 and s.is_del=0 and c2.is_del=0
+                <if test="did!=-1">
+                   and major.did=#{did}
+                </if>
+                <if test="mid!=-1">
+                    and g.mid=#{mid}
+                </if>
+                <if test="gid!=-1">
+                    and c.gid=#{gid}
+                </if>
+                <if test="classid!=-1">
+                    and s.classid=#{classid}
+                </if>
+                <if test="sname!=null and sname!=''">
+                    and s.sname=#{sname}
+                </if>
+    </select>
+    <select id="findCourseByMid" resultType="cn.kgc.entity.Course">
+        select *
+        from course where (mid=#{mid} and is_del=0 and ctid!=4) or (ctid=5 and is_del=0 and ctid!=4)
+    </select>
+    <update id="update">
+        update stu_course set cid=#{cid} where scid=#{scid}
+    </update>
+    <update id="del">
+        update stu_course set is_del=1 where scid=#{scid}
+    </update>
+    <select id="selCountAndMax" resultType="cn.kgc.entity.Course">
+        select cselcount,cmaxcount
+        from course
+        where cid=#{cid}
+    </select>
+    <update id="updateCountJian">
+        update course set cselcount=cselcount-1 where cid=#{cid}
+    </update>
+    <update id="updateCountJia">
+        update course set cselcount=cselcount+1 where cid=#{cid}
+    </update>
+</mapper>

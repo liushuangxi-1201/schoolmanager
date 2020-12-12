@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kgc.mapper.StudentMapper">
+    <insert id="add" parameterType="Student" useGeneratedKeys="true" keyProperty="sid">
+        insert into student value (null,#{stuid},#{sname},#{sgender},#{sbirthday},
+                                #{pid},#{snation},#{scardid},#{sphone},#{saddress},NOW(),
+                                NULL,0,#{classid},0,'11111');
+    </insert>
+    <insert id="addStuCourse">
+        insert into stu_course (scid, sid, cid, is_del)
+        values (null, #{sid}, #{cid}, 0)
+    </insert>
+    <select id="findMid" resultType="Course">
+        select cid
+         from course
+         where mid = (select mid
+                      from grade
+                      where gid = (select gid
+                                   from classinfo
+                                   where classid = #{classid}))
+           and studytype = '必修'
+    </select>
+</mapper>

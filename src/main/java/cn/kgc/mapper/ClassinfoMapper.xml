@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kgc.mapper.ClassinfoMapper">
+    <select id="findAll" resultType="Classinfo">
+        select c.*,m.mid mid,m.mname mname,d.did did,d.dname dname,g.gid gid,g.gname gname
+        from major m,department d,grade g,classinfo c
+        where d.did=m.did and g.mid=m.mid and c.gid=g.gid and c.is_del=0
+        <if test="did!=null and did!=''">
+            and d.did=#{did}
+        </if>
+        <if test="mid!=null and mid!=''">
+            and m.mid=#{mid}
+        </if>
+        <if test="gid!=null and gid!=''">
+            and g.gid=#{gid}
+        </if>
+        <if test="classid!=null and classid!=''">
+            and c.classid=#{classid}
+        </if>
+    </select>
+    <insert id="add" parameterType="Classinfo">
+        insert into classinfo value(null,#{classname},NOW(),null,0,#{gid},0)
+    </insert>
+    <update id="update" parameterType="Classinfo">
+        update classinfo
+        <set>
+            <if test="classname!=null and classname!=''">
+                classname=#{classname},
+            </if>
+            <if test="endtime!=null and endtime!=''">
+                endtime=#{endtime},
+            </if>
+            <if test="ccount!=null and ccount!=''">
+                ccount=#{ccount},
+            </if>
+            <if test="gid!=null and gid!=''">
+                gid=#{gid},
+            </if>
+            <if test="isDel!=null and isDel!=''">
+                is_del=#{isDel},
+            </if>
+        </set>
+        where classid=#{classid}
+    </update>
+    <update id="updateClassNum" parameterType="Integer">
+        update classinfo set ccount=ccount+1
+        where classid=#{classid}
+    </update>
+</mapper>
